@@ -1,0 +1,61 @@
+Q1. How did you handle inline editing in the table?
+Answer :
+* Inline editing was implemented by maintaining a state variable editingTaskId to track which task is being edited.
+ * When the "Edit" button for a task is clicked:
+   *The editingTaskId is set to the id of the selected task.
+   *The current task data is copied into the editedTask state for manipulation.
+* Editable input fields (<input> or <select>) are displayed for the selected task, allowing users to modify the title, description, or status.
+* The "Save" button triggers the handleSave function:
+  *The updated task is sent to the updateTask function, which updates the task list in the state.
+  *The editingTaskId is reset to null to exit edit mode.
+* The "Cancel" button reverts the state by clearing editedTask and resetting editingTaskId.
+
+Q2. Explain how you fetched and processed the data from the dummy API.
+Answer: 
+ * The data was fetched from the JSONPlaceholder API using the fetch method inside a useEffect hook.
+Steps:
+1. Fetched 20 tasks using the endpoint https://jsonplaceholder.typicode.com/todos.
+2. Mapped the API response to create a new array of tasks:
+  * Each task included id, title, and completed fields from the API.
+  * Added a description field (empty string by default).
+Converted the completed boolean into a human-readable status field ("Done" for true, "To Do" for false).
+3.Stored the processed task array in the tasks state using setTasks.
+
+Q3. What approach did you use to filter tasks based on status?
+Answer: 
+* A state variable filter was created to hold the current filter value (e.g., "All", "To Do", "In Progress", or "Done").
+* A dropdown (<select>) allowed users to choose the desired filter.
+The filteredTasks array was derived using the following logic:
+     const filteredTasks = tasks.filter(
+        (task) => filter === 'All' || task.status === filter
+        );
+* If the filter was "All", all tasks were displayed.
+* Otherwise, only tasks with the matching status were shown.
+
+Q4. How did you manage the state of tasks when adding or editing them?
+Answer:
+* Adding Task:
+     * Used the addTask function to add a new task
+     * The new task was appended to the tasks array using the spread operator:
+              setTasks((prevTasks) => [...prevTasks, { id: prevTasks.length + 1, ...newTask }]);
+* The new task included a unique ID and the provided title, description, and status.
+* After adding, a toast notification confirmed the addition
+
+* Editing Tasks:
+   * Used the updateTask function to update a task
+   * The tasks array was updated using map, replacing the task with a matching id
+                        setTasks((prevTasks) =>
+                    prevTasks.map((task) =>
+                        task.id === updatedTask.id ? updatedTask : task
+                    )
+                    );
+Q5.What challenges did you face during development, and how did you overcome them?
+Answer:
+  Challenge 1: Inline Editing Logic
+       Problem: Managing state for the task being edited and ensuring changes were isolated to that task.
+              Used editingTaskId to track which task was being edited.
+               Created a separate editedTask state to hold temporary changes until saved. 
+ Challenge 2: Filtering Tasks
+      Problem: Filtering tasks dynamically based on status required handling various cases like "All" or specific statuses.
+        Used the filter method to create a derived array (filteredTasks) based on the current filter state.
+        Ensured the filter logic worked efficiently and updated the UI as expected.
